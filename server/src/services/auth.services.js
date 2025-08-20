@@ -8,6 +8,15 @@ export const registerUserservice = async (name, email, password) => {
     throw new ConflictError("Email already exists");
   }
   const user = await createUser(name, email, password);
-  const token = await signToken({ id: user._id });
+  const token = signToken({ id: user._id });
   return token;
+};
+
+export const loginUserService = async (email, password) => {
+  const user = await findByEmail(email);
+  if (!user || user.password !== password) {
+    throw new Error("Invalid email or password");
+  }
+  const token = await signToken({ id: user._id });
+  return { token, user };
 };

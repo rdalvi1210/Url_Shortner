@@ -8,10 +8,10 @@ export const saveShortUrl = async (url, shortUrl, userId) => {
       short_url: shortUrl,
     });
     if (userId) {
-      newShortUrl.user_id = userId;
+      newShortUrl.user = userId;
     }
     await newShortUrl.save();
-
+    console.log(newShortUrl, "newShortUrl saved");
     return shortUrl;
   } catch (error) {
     if (error.code === 11000) {
@@ -27,4 +27,9 @@ export const findUrlfromshortUrl = async (shortUrl) => {
     { $inc: { clicks: 1 } }
   );
   return urlData;
+};
+
+export const checkShortUrlExists = async (slug) => {
+  const exists = await UrlSchema.findOne({ short_url: slug });
+  return exists;
 };
