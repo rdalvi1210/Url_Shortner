@@ -1,10 +1,12 @@
 import express from "express";
-import { createShortUrl, getShortUrl } from "../controller/short_url.controller.js";
-import { get } from "mongoose";
+import {
+  createShortUrl,
+  getShortUrl,
+} from "../controller/short_url.controller.js";
 
 const router = express.Router();
 
-router.post("/api/create", createShortUrl);
-router.get("/:shortUrl", getShortUrl);
+router.post("/", createShortUrl);
+router.get("/api/:shortUrl", getShortUrl);
 
 export default router;
