@@ -11,7 +11,8 @@ export const registerUser = async (name,password,email) =>{
 }
 
 export const logoutUser = async () =>{
-    const {data} = await axiosInstance.get("/api/auth/logout")
+    const { data } = await axiosInstance.get("/api/auth/logout")
+    console.log(data)
     return data
 }
 

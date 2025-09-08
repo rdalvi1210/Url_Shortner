@@ -1,19 +1,47 @@
-import { generateNanoId } from "../utils/helper.js"
-import urlSchema from "../models/short_url.model.js"
-import { getCustomShortUrl, saveShortUrl } from "../dao/short_url.js"
+import { generateNanoId } from "../utils/helper.js";
+import { getCustomShortUrl, saveShortUrl } from "../dao/short_url.js";
 
-export const createShortUrlWithoutUser = async (url) => {
-    const shortUrl = generateNanoId(7)
-    if(!shortUrl) throw new Error("Short URL not generated")
-    await saveShortUrl(shortUrl,url)
-    return shortUrl
-}
+/**
+ * Create a short URL for anonymous users
+ * @param {string} url - Original URL
+ * @param {string|null} slug - Optional custom slug
+ */
+export const createShortUrlWithoutUser = async (url, slug = null) => {
+  if (!url || typeof url !== "string") {
+    throw new Error("Invalid URL provided");
+  }
 
-export const createShortUrlWithUser = async (url,userId,slug=null) => {
-    const shortUrl = slug || generateNanoId(7)
-    const exists = await getCustomShortUrl(slug)
-    if(exists) throw new Error("This custom url already exists")
+  const shortUrl = slug ? String(slug) : generateNanoId(7);
 
-    await saveShortUrl(shortUrl,url,userId)
-    return shortUrl
-}
+  // Check if custom slug already exists
+  if (slug) {
+    const exists = await getCustomShortUrl(shortUrl);
+    if (exists) throw new Error("This custom URL already exists");
+  }
+
+  await saveShortUrl(shortUrl, url); // no userId for anonymous
+  return shortUrl;
+};
+
+/**
+ * Create a short URL for authenticated users
+ * @param {string} url - Original URL
+ * @param {string} userId - User ID
+ * @param {string|null} slug - Optional custom slug
+ */
+export const createShortUrlWithUser = async (url, userId, slug = null) => {
+  if (!url || typeof url !== "string") {
+    throw new Error("Invalid URL provided");
+  }
+
+  const shortUrl = slug ? String(slug) : generateNanoId(7);
+
+  // Check if custom slug already exists
+  if (slug) {
+    const exists = await getCustomShortUrl(shortUrl);
+    if (exists) throw new Error("This custom URL already exists");
+  }
+
+  await saveShortUrl(shortUrl, url, userId);
+  return shortUrl;
+};
